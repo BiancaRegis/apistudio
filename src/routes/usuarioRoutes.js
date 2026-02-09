@@ -1,30 +1,29 @@
 import express from 'express';
 import * as usuarioController from '../controllers/usuarioController.js';
 import validate from '../middlewares/validate.js';
-import { usuarioCreateSchema, usuarioUpdateSchema } from '../controllers/usuarioController.js';
+import {
+    usuarioCreateSchema,
+    usuarioUpdateSchema
+} from '../controllers/usuarioController.js';
 
-import authMiddleware from '../middlewares/authMiddleware';
+// futuramente usar:
+// import authMiddleware from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', validate(usuarioCreateSchema), usuarioController.adicionarUsuario);
-// ROTA: POST /api/usuarios
+// CRIAR USUÁRIO
+router.post('/', validate(usuarioCreateSchema),usuarioController.criarUsuario);
 
-//2 aplica o proteção do login em todas as rotas abaixo desta linha
-// router.use(authMiddleware); // //DESCOMENTAR PARA FUNCIONAR
- 
-// o caminho base '/api/usuarios' já foi definido no index.js
-// agora definimos apenas as partes relativas: '/', '/:idUsuario', etc.
- 
+// LISTAR TODOS
 router.get('/', usuarioController.listarUsuarios);
-// ROTA: GET /api/usuarios
-router.get('/:idUsuario', usuarioController.listarUsuarioId);
-// ROTA: GET /api/usuarios/:idUsuario
 
-router.put('/:idUsuario', validate(usuarioUpdateSchema), usuarioController.atualizarUsuario);
-// ROTA: PUT /api/usuarios/:idUsuario
+// LISTAR POR ID
+router.get('/:id', usuarioController.listarUsuarioId);
 
-router.delete('/:idUsuario', usuarioController.deletarUsuario);
-// ROTA: DELETE /api/usuarios/:idUsuario
+// ATUALIZAR
+router.put('/:id', validate(usuarioUpdateSchema), usuarioController.atualizarUsuario);
+
+// DELETAR
+router.delete('/:id', usuarioController.removerUsuario);
 
 export default router;

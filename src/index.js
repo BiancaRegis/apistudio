@@ -1,45 +1,77 @@
-import express from 'express'
-console.log('olá');
+// CARREGA VARIÁVEIS DE AMBIENTE
+import 'dotenv/config';
 
+// DEPENDÊNCIAS
+import express from 'express';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ROTAS
+import authRoutes from './routes/authRoutes.js';
+import usuarioRoutes from './routes/usuarioRoutes.js';
+import cursoRoutes from './routes/cursoRoutes.js';
+import turmaRoutes from './routes/turmaRoutes.js';
+import matriculaRoutes from './routes/matriculaRoutes.js';
+import pagamentoRoutes from './routes/pagamentoRoutes.js';
+import listaEsperaRoutes from './routes/listaEsperaRoutes.js';
+
+//////CONFIGURAÇÕES DE CAMINHO
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+/////CORS
+const corsOptions = {
+    origin: ['http://localhost:3333'],
+    methods: 'GET, POST, PUT, PATCH, DELETE',
+    credentials: true
+};
+
+
+////INICIALIZAÇÃO
 const app = express();
 
+//// MIDDLEWARES
+app.use(helmet());
+app.use(cors(corsOptions));
+app.use(morgan('dev'));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
-app.post('/clientes', (req, res) => {
-    const novoCliente = req.body;
-
-    console.log("Recebemos um novo cliente:", novoCliente);
-
-    res.json({ message: `Cliente ${novoCliente.nome} cadastrado com sucesso!`, data: novoCliente});
+//// ROTA RAIZ
+app.get('/', (req, res) => {
+    res.json({
+        message: 'API Studio Wakanda funcionando'
+    });
 });
 
-const PORTA = 3333;
+////PREFIXO API
+const apiPrefix = '/api';
 
-app.get('/', (request, response) => {
-    response.json({message: "Bem-vindo à API Studio Wakanda in Aracoara!"});
+app.use(`${apiPrefix}/auth`, authRoutes);
+app.use(`${apiPrefix}/usuarios`, usuarioRoutes);
+app.use(`${apiPrefix}/cursos`, cursoRoutes);
+app.use(`${apiPrefix}/turmas`, turmaRoutes);
+app.use(`${apiPrefix}/matriculas`, matriculaRoutes);
+app.use(`${apiPrefix}/pagamentos`, pagamentoRoutes);
+app.use(`${apiPrefix}/lista-espera`, listaEsperaRoutes);
+
+
+// ERRO GLOBAL
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        error: 'algo deu errado no servidor'
+    });
 });
+
+
+// SERVIDOR
+const PORTA = process.env.PORT || 3333;
 
 app.listen(PORTA, () => {
-    console.log(`Servidor rodando na porta ${PORTA}. Acesse https://localhost:${PORTA}`);
-});
-
-const listaDeClientes = [
-    {id: 1, nome: "João Silva", email: "joao@gmail.com"},
-    {id: 2, nome: "Bianca Regis", email: "bibi@gmail.com"}
-];
-
-app.get('/clientes', (req,res) => {
-    res.json(listaDeClientes);
-});
-
-app.get('/clientes/:id', (req,res) => {
-    const idDoCliente = parseInt(req.params.id);
-
-    const cliente = listaDeClientes.find(c => c.id === idDoCliente);
-
-    if (cliente) {
-        res.json(cliente);
-    } else {
-        res.status(404).json({ mensagem: "Cliente não encontrado."});
-    }
+    console.log(`Studio Wakanda rodando na porta ${PORTA}`);
 });
