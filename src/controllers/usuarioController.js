@@ -71,7 +71,6 @@ export const listarUsuarioId = async (req, res) => {
 };
 
 //CRIAR USUÁRIO
-
 export const criarUsuario = async (req, res) => {
     try {
         const { error } = usuarioCreateSchema.validate(req.body);
@@ -79,6 +78,17 @@ export const criarUsuario = async (req, res) => {
         if (error) {
             return res.status(400).json({
                 message: error.details[0].message
+            });
+        }
+
+        const { email } = req.body;
+
+        // verifica se email já existe
+        const usuarioExistente = await usuarioService.findByEmail(email);
+
+        if (usuarioExistente) {
+            return res.status(400).json({
+                message: "este email já está cadastrado."
             });
         }
 

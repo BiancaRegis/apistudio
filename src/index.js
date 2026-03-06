@@ -16,39 +16,37 @@ import cursoRoutes from './routes/cursoRoutes.js';
 import turmaRoutes from './routes/turmaRoutes.js';
 import matriculaRoutes from './routes/matriculaRoutes.js';
 import pagamentoRoutes from './routes/pagamentoRoutes.js';
-import listaEsperaRoutes from './routes/listaEsperaRoutes.js';
+import listaInteresseRoutes from './routes/listaInteresseRoutes.js';
 
-//////CONFIGURAÇÕES DE CAMINHO
+// CONFIGURAÇÕES DE CAMINHO
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
-/////CORS
+// CORS
 const corsOptions = {
     origin: ['http://localhost:3333'],
     methods: 'GET, POST, PUT, PATCH, DELETE',
     credentials: true
 };
 
-
-////INICIALIZAÇÃO
+// INICIALIZAÇÃO
 const app = express();
 
-//// MIDDLEWARES
+// MIDDLEWARES
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
-//// ROTA RAIZ
+// ROTA RAIZ
 app.get('/', (req, res) => {
     res.json({
         message: 'API Studio Wakanda funcionando'
     });
 });
 
-////PREFIXO API
+// PREFIXO API
 const apiPrefix = '/api';
 
 app.use(`${apiPrefix}/auth`, authRoutes);
@@ -57,8 +55,7 @@ app.use(`${apiPrefix}/cursos`, cursoRoutes);
 app.use(`${apiPrefix}/turmas`, turmaRoutes);
 app.use(`${apiPrefix}/matriculas`, matriculaRoutes);
 app.use(`${apiPrefix}/pagamentos`, pagamentoRoutes);
-app.use(`${apiPrefix}/lista-espera`, listaEsperaRoutes);
-
+app.use(`${apiPrefix}/lista-interesse`, listaInteresseRoutes);
 
 // ERRO GLOBAL
 app.use((err, req, res, next) => {
@@ -67,7 +64,6 @@ app.use((err, req, res, next) => {
         error: 'algo deu errado no servidor'
     });
 });
-
 
 // SERVIDOR
 const PORTA = process.env.PORT || 3333;

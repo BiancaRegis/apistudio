@@ -2,7 +2,6 @@ import * as pagamentoService from '../services/pagamentoService.js';
 import Joi from 'joi';
 
 export const pagamentoCreateSchema = Joi.object({
-    idPagamento: Joi.string().allow(''),
     dataPagamento: Joi.string().required(),
     valorPago: Joi.string().required(),
     metodo: Joi.string().allow(''),
