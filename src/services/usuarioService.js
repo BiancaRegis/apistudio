@@ -33,6 +33,22 @@ export const create = async (usuarioData) => {
     return newUsuario;
 };
 
+export const update = async (idUsuario, usuarioData) => {
+
+    // se a senha estiver sendo atualizada
+    if (usuarioData.senha) {
+        const saltRounds = 10;
+        usuarioData.senha = await bcrypt.hash(usuarioData.senha, saltRounds);
+    }
+
+    const [result] = await db.query(
+        'UPDATE usuario SET ? WHERE idUsuario = ?',
+        [usuarioData, idUsuario]
+    );
+
+    return result.affectedRows > 0;
+};
+
 export const remove = async (idUsuario) => {
     const[result] = await db.query('DELETE FROM usuario WHERE idUsuario = ?', [idUsuario]);
     return result.affectedRows > 0;

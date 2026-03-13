@@ -21,19 +21,7 @@ export const usuarioUpdateSchema = Joi.object({
 
 export const listarUsuarios = async (req, res) => {
     try {
-        const {
-            idUsuario,
-            tipoUsuario,
-            nome,
-            email
-        } = req.query;
-
-        const usuarios = await usuarioService.findAll(
-            idUsuario,
-            tipoUsuario,
-            nome,
-            email
-        );
+        const usuarios = await usuarioService.findAll();
 
         if (usuarios.length === 0) {
             return res.status(404).json({
@@ -52,9 +40,9 @@ export const listarUsuarios = async (req, res) => {
 
 export const listarUsuarioId = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { idUsuario } = req.params;
 
-        const usuario = await usuarioService.findById(id);
+        const usuario = await usuarioService.findById(idUsuario);
 
         if (!usuario) {
             return res.status(404).json({
@@ -108,7 +96,7 @@ export const criarUsuario = async (req, res) => {
 // USUÁRIO
 export const atualizarUsuario = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { idUsuario } = req.params;
 
         const { error } = usuarioUpdateSchema.validate(req.body);
 
@@ -118,7 +106,7 @@ export const atualizarUsuario = async (req, res) => {
             });
         }
 
-        const atualizado = await usuarioService.update(id, req.body);
+        const atualizado = await usuarioService.update(idUsuario, req.body);
 
         if (!atualizado) {
             return res.status(404).json({
@@ -139,9 +127,9 @@ export const atualizarUsuario = async (req, res) => {
 //REMOVER USUÁRIO
 export const removerUsuario = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { idUsuario } = req.params;
 
-        const removido = await usuarioService.remove(id);
+        const removido = await usuarioService.remove(idUsuario);
 
         if (!removido) {
             return res.status(404).json({

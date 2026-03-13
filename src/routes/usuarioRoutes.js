@@ -18,12 +18,12 @@ router.post('/', validate(usuarioCreateSchema),usuarioController.criarUsuario);
 router.get('/', usuarioController.listarUsuarios);
 
 // LISTAR POR ID
-router.get('/:id', usuarioController.listarUsuarioId);
+router.get('/:idUsuario', usuarioController.listarUsuarioId);
 
 // ATUALIZAR
-router.put('/:id', validate(usuarioUpdateSchema), usuarioController.atualizarUsuario);
+router.put('/:idUsuario', validate(usuarioUpdateSchema), usuarioController.atualizarUsuario);
 
 // DELETAR
-router.delete('/:id', usuarioController.removerUsuario);
+router.delete('/:idUsuario', usuarioController.removerUsuario);
 
 export default router;
