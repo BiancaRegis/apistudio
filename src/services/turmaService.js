@@ -30,7 +30,7 @@ export const findAll = async (
     }
 
     if (horario) {
-        conditions.push('horario = ?'); 
+        conditions.push('horario = ?');
         values.push(horario);
     }
 
@@ -64,6 +64,17 @@ export const findAll = async (
 
 
 export const create = async (turmaData) => {
+
+    // verifica se curso existe
+    const [curso] = await db.query(
+        'SELECT idCurso FROM curso WHERE idCurso = ?',
+        [turmaData.idCurso]
+    );
+
+    if (curso.length === 0) {
+        throw { code: 'CURSO_NAO_EXISTE' };
+    }
+
     const [result] = await db.query(
         'INSERT INTO turma SET ?',
         turmaData

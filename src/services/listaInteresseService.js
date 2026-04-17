@@ -1,6 +1,17 @@
 import db from '../db/db.js';
 
 export const criarInteresse = async (dados) => {
+
+   // 🔹 verifica duplicidade
+   const [existe] = await db.execute(
+      'SELECT * FROM listaInteresse WHERE idUsuario = ? AND idCurso = ?',
+      [dados.idUsuario, dados.idCurso]
+   );
+
+   if (existe.length > 0) {
+      throw { code: 'INTERESSE_DUPLICADO' };
+   }
+
    const sql = `
       INSERT INTO listaInteresse
       (dataInteresse, situacao, idUsuario, idCurso)
@@ -34,8 +45,10 @@ export const buscarPorCurso = async (idCurso) => {
 };
 
 export const deletarInteresse = async (id) => {
-   await db.execute(
+   const [result] = await db.execute(
       'DELETE FROM listaInteresse WHERE idInteresse = ?',
       [id]
    );
+
+   return result.affectedRows > 0;
 };

@@ -2,19 +2,19 @@ import * as cursoService from '../services/cursoService.js';
 import Joi from 'joi';
 
 export const cursoCreateSchema = Joi.object({
-    titulo: Joi.string().required(),
-    descricao: Joi.string().required(),
-    cargaHoraria: Joi.number().required(),
-    nivel: Joi.number().required(),
-    situacao: Joi.string().required()
+    titulo: Joi.string().min(3).required(),
+    descricao: Joi.string().min(5).required(),
+    cargaHoraria: Joi.number().min(1).required(),
+    nivel: Joi.number().required().valid(1, 2, 3),
+    situacao: Joi.string().valid('ativo', 'inativo').required()
 });
 
 export const cursoUpdateSchema = Joi.object({
-    titulo: Joi.string(),
-    descricao: Joi.string(),
-    cargaHoraria: Joi.string(),
-    nivel: Joi.string(),
-    situacao: Joi.string(),
+    titulo: Joi.string().min(3),
+    descricao: Joi.string().min(5),
+    cargaHoraria: Joi.string().min(1),
+    nivel: Joi.string().valid(1, 2, 3),
+    situacao: Joi.string().valid('ativo', 'inativo'),
 }).min(1);
 //Listar todos os produtos
 export const listarCursos = async (req, res) => {

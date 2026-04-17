@@ -1,11 +1,27 @@
 import * as service from '../services/listaInteresseService.js';
+import Joi from 'joi';
+
+export const listaSchema = Joi.object({
+   dataInteresse: Joi.date().iso().required(),
+   situacao: Joi.string().min(3).required(),
+   idUsuario: Joi.number().required(),
+   idCurso: Joi.number().required()
+});
 
 export const criarLista = async (req, res) => {
    try {
       const result = await service.criarInteresse(req.body);
       res.status(201).json(result);
    } catch (err) {
-      res.status(500).json({ erro: err.message });
+
+      if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+         return res.status(400).json({
+            erro: 'usuário ou curso inválido.'
+         });
+      }
+
+      console.error('erro ao criar interesse:', err);
+      res.status(500).json({ erro: 'erro interno' });
    }
 };
 

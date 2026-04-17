@@ -5,10 +5,10 @@ export const turmaCreateSchema = Joi.object({
     dataInicio: Joi.date().iso().allow(''),
     dataFinal: Joi.date().iso().allow(''),
     horario: Joi.string().required(), 
-    vagas: Joi.number().required(),
-    endereco: Joi.string().required(),
-    preco: Joi.number().required(),
-    situacao: Joi.string().required(),
+    vagas: Joi.number().min(1).required(),
+    endereco: Joi.string().min(3).required(),
+    preco: Joi.number().min(0).required(),
+    situacao: Joi.string().valid('aberta', 'fechado').required(),
     idCurso: Joi.number().required()
 });
 
@@ -17,20 +17,20 @@ export const turmaUpdateSchema = Joi.object({
     dataInicio: Joi.date().iso().allow(''),
     dataFinal: Joi.date().iso().allow(''),
     horario: Joi.string(),
-    vagas: Joi.number(),
-    endereco: Joi.string(),
-    preco: Joi.number(),
-    situacao: Joi.string(),
-    idCurso: Joi.string(),
+    vagas: Joi.number().min(1),
+    endereco: Joi.string().min(3),
+    preco: Joi.number().min(0),
+    situacao: Joi.string().valid('aberta', 'fechado'),
+    idCurso: Joi.number()
 }).min(1);
 
 export const listarTurmas = async (req, res) => {
     try {
 
-        const { idTurma, dataInicio, dataFinal, horario, vagas, preco, situacao } = req.query;
+        const { idTurma, dataInicio, dataFinal, horario, vagas, preco, situacao, idCurso } = req.query;
 
 const turmas = await turmaService.findAll(
-    idTurma, dataInicio, dataFinal, horario, vagas, preco, situacao);
+    idTurma, dataInicio, dataFinal, horario, vagas, preco, situacao, idCurso);
 
         if (turmas.length === 0) {
             return res.status(404).json({ message: "nenhuma turma encontrada com esses filtros."});
@@ -45,12 +45,36 @@ const turmas = await turmaService.findAll(
 export const adicionarTurma = async (req, res) => {
     try {
         const novaTurma = await turmaService.create(req.body);
-        res.status(201).json({ message: 'turma nova adicionado com sucesso', data: novaTurma });
+
+        res.status(201).json({
+            message: 'turma nova adicionada com sucesso',
+            data: novaTurma
+        });
+
     } catch (err) {
-        console.error('erro ao adicionar turma:', err);
-        if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({error: 'ID já cadastrado.'});
+
+        if (err.code === 'CURSO_NAO_EXISTE') {
+            return res.status(400).json({
+                message: 'curso informado não existe.'
+            });
         }
+
+        //
+        if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+            return res.status(400).json({
+                message: 'curso inválido.'
+            });
+        }
+
+        //ID duplicado
+        if (err.code === 'ER_DUP_ENTRY') {
+            return res.status(409).json({
+                error: 'ID já cadastrado.'
+            });
+        }
+
+ 
+        console.error('erro ao adicionar turma:', err);
         res.status(500).json({ error: 'erro ao adicionar turma' });
     }
 };

@@ -39,8 +39,12 @@ export const findAll = async (idCurso, titulo, cargaHoraria, nivel, situacao) =>
 };
 
 export const create = async (cursoData) => {
-    await db.query('INSERT INTO curso SET ?', cursoData);
-    return cursoData;
+    const [result] = await db.query('INSERT INTO curso SET ?', cursoData);
+
+    return {
+        idCurso: result.insertId,
+        ...cursoData
+    };
 };
 
 export const update = async (idCurso, cursoData) => {

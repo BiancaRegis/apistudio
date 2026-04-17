@@ -3,7 +3,7 @@ import * as usuarioService from '../services/usuarioService.js';
 import Joi from 'joi';
 
 export const usuarioCreateSchema = Joi.object({
-    tipoUsuario: Joi.string().required(),
+    tipoUsuario: Joi.string().valid('admin', 'cliente').required(),
     nome: Joi.string().required(),
     email: Joi.string().email().required(),
     senha: Joi.string().required(),
@@ -11,12 +11,13 @@ export const usuarioCreateSchema = Joi.object({
 });
 
 export const usuarioUpdateSchema = Joi.object({
-    tipoUsuario: Joi.string(),
+    tipoUsuario: Joi.string().valid('admin', 'cliente'),
     nome: Joi.string(),
     email: Joi.string().email(),
     senha: Joi.string(),
     telefone: Joi.number().allow(null)
-});
+}).min(1);
+
 //LISTAR USUÁRIOS
 
 export const listarUsuarios = async (req, res) => {
@@ -142,6 +143,15 @@ export const removerUsuario = async (req, res) => {
         });
 
     } catch (error) {
+
+        //TRATAMENTO ESPECÍFICO DO ERRO DO MYSQL
+        if (error.code === 'ER_ROW_IS_REFERENCED_2') {
+            return res.status(400).json({
+                message: "não é possível excluir usuário vinculado a outros dados."
+            });
+        }
+
+        //ERRO GENÉRICO
         console.error('erro ao remover usuário:', error);
         res.status(500).json({ error: 'erro interno do servidor' });
     }
