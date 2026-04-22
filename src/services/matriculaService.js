@@ -46,11 +46,23 @@ export const findAll = async (
 };
 
 export const create = async (matriculaData) => {
-    await db.query('INSERT INTO matricula SET ?', matriculaData);
-    return matriculaData;
+    const [result] = await db.query(
+        'INSERT INTO matricula SET ?',
+        matriculaData
+    );
+
+    return {
+        idMatricula: result.insertId,
+        ...matriculaData
+    };
 };
 
 export const update = async (idMatricula, matriculaData) => {
+
+    if (Object.keys(matriculaData).length === 0) {
+        throw { code: 'EMPTY_UPDATE' };
+    }
+
     const [result] = await db.query(
         'UPDATE matricula SET ? WHERE idMatricula = ?',
         [matriculaData, idMatricula]

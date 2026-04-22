@@ -2,18 +2,17 @@ import * as matriculaService from '../services/matriculaService.js';
 import Joi from 'joi';
 
 export const matriculaCreateSchema = Joi.object({
-    idMatricula: Joi.string().allow(''),
-    dataMatricula: Joi.string().required(),
-    situacao: Joi.string().allow(''),
-    idUsuario: Joi.string().required(),
-    idTurma: Joi.string().required()
+    dataMatricula: Joi.date().iso().required(),
+    situacao: Joi.string().valid('pendente', 'confirmada', 'cancelada').required,
+    idUsuario: Joi.number().required(),
+    idTurma: Joi.number().required()
 });
 
 export const matriculaUpdateSchema = Joi.object({
-    dataMatricula: Joi.string().allow(''),
-    situacao: Joi.string().allow(''),
-    idUsuario: Joi.string(),
-    idTurma: Joi.string()
+    dataMatricula: Joi.date().iso(),
+    situacao: Joi.string().min(3).valid('pendente', 'confirmada', 'cancelada'),
+    idUsuario: Joi.number(),
+    idTurma: Joi.number()
 }).min(1);
 
 export const listarMatriculas = async (req, res) => {
