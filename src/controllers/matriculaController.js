@@ -71,11 +71,24 @@ export const atualizarMatricula = async (req, res) => {
             return res.status(404).json({ error: 'matrícula não encontrada' });
         }
 
-        res.status(200).json({ message: 'matrícula atualizada com sucesso' });
+        return res.status(200).json({ message: 'matrícula atualizada com sucesso' });
 
     } catch (err) {
+
+        if (err.code === 'EMPTY_UPDATE') {
+            return res.status(400).json({
+                error: 'nenhum dado para atualizar'
+            });
+        }
+
+        if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+            return res.status(400).json({
+                error: 'usuário ou turma inválido'
+            });
+        }
+
         console.error('erro ao atualizar matrícula:', err);
-        res.status(500).json({ error: 'erro ao atualizar matrícula' });
+        return res.status(500).json({ error: 'erro ao atualizar matrícula' });
     }
 };
 

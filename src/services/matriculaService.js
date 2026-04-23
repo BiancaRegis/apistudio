@@ -46,15 +46,18 @@ export const findAll = async (
 };
 
 export const create = async (matriculaData) => {
-    const [result] = await db.query(
-        'INSERT INTO matricula SET ?',
-        matriculaData
+
+    const [existe] = await db.query(
+        'SELECT * FROM matricula WHERE idUsuario = ? AND idTurma = ?',
+        [matriculaData.idUsuario, matriculaData.idTurma]
     );
 
-    return {
-        idMatricula: result.insertId,
-        ...matriculaData
-    };
+    if (existe.length > 0) {
+        throw { code: 'MATRICULA_DUPLICADA' };
+    }
+
+    await db.query('INSERT INTO matricula SET ?', matriculaData);
+    return matriculaData;
 };
 
 export const update = async (idMatricula, matriculaData) => {
