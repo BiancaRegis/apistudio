@@ -52,11 +52,23 @@ export const findAll = async (
 };
 
 export const create = async (pagamentoData) => {
-    await db.query('INSERT INTO pagamento SET ?', pagamentoData);
-    return pagamentoData;
+    const [result] = await db.query(
+        'INSERT INTO pagamento SET ?',
+        pagamentoData
+    );
+
+    return {
+        idPagamento: result.insertId,
+        ...pagamentoData
+    };
 };
 
 export const update = async (idPagamento, pagamentoData) => {
+
+    if (Object.keys(pagamentoData).length === 0) {
+        throw { code: 'EMPTY_UPDATE' };
+    }
+
     const [result] = await db.query(
         'UPDATE pagamento SET ? WHERE idPagamento = ?',
         [pagamentoData, idPagamento]

@@ -2,19 +2,19 @@ import * as pagamentoService from '../services/pagamentoService.js';
 import Joi from 'joi';
 
 export const pagamentoCreateSchema = Joi.object({
-    dataPagamento: Joi.string().required(),
-    valorPago: Joi.string().required(),
-    metodo: Joi.string().allow(''),
-    situacao: Joi.string().allow(''),
-    idMatricula: Joi.string().required()
+    dataPagamento: Joi.date().iso().required(),
+    valorPago: Joi.number().positive().required(),
+    metodo: Joi.string().lowercase().valid('pix', 'cartao_credito', 'cartao_debito', 'boleto', 'dinheiro', 'carteira_digital').required(),
+    situacao: Joi.string().lowercase().valid('aguardando', 'pago', 'estornado', 'falhou').default('aguardando'),
+    idMatricula: Joi.number().required()
 });
 
 export const pagamentoUpdateSchema = Joi.object({
-    dataPagamento: Joi.string(),
-    valorPago: Joi.string(),
-    metodo: Joi.string().allow(''),
-    situacao: Joi.string().allow(''),
-    idMatricula: Joi.string()
+    dataPagamento: Joi.date().iso(),
+    valorPago: Joi.number().positive(),
+    metodo: Joi.string().lowercase().valid('pix', 'cartao_credito', 'cartao_debito', 'boleto', 'dinheiro', 'carteira_digital'),
+    situacao: Joi.string().lowercase().valid('aguardando', 'pago', 'estornado', 'falhou'),
+    idMatricula: Joi.number()
 }).min(1);
 
 export const listarPagamentos = async (req, res) => {
@@ -63,8 +63,8 @@ export const adicionarPagamento = async (req, res) => {
     } catch (err) {
         console.error('erro ao adicionar pagamento:', err);
 
-        if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({ error: 'ID já cadastrado.' });
+        if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+            return res.status(400).json({ error: 'matrícula inválida.' });
         }
 
         res.status(500).json({ error: 'erro ao adicionar pagamento' });
@@ -85,10 +85,24 @@ export const atualizarPagamento = async (req, res) => {
 
     } catch (err) {
         console.error('erro ao atualizar pagamento:', err);
-        res.status(500).json({ error: 'erro ao atualizar pagamento' });
-    }
-};
 
+        if (err.code === 'EMPTY_UPDATE') {
+            return res.status(400).json({
+                error: 'nenhum dado para atualizar'
+            });
+        }
+
+        if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+            return res.status(400).json({
+                error: 'matrícula inválida'
+            });
+        }
+
+        res.status(500).json({
+            error: 'erro ao atualizar pagamento'
+        });
+    }
+}
 export const deletarPagamento = async (req, res) => {
     try {
         const { idPagamento } = req.params;

@@ -3,7 +3,7 @@ import Joi from 'joi';
 
 export const matriculaCreateSchema = Joi.object({
     dataMatricula: Joi.date().iso().required(),
-    situacao: Joi.string().valid('pendente', 'confirmada', 'cancelada').required,
+    situacao: Joi.string().valid('pendente', 'confirmada', 'cancelada').required(),
     idUsuario: Joi.number().required(),
     idTurma: Joi.number().required()
 });
@@ -45,19 +45,30 @@ export const adicionarMatricula = async (req, res) => {
     try {
         const novaMatricula = await matriculaService.create(req.body);
 
-        res.status(201).json({
+        return res.status(201).json({
             message: 'matrícula adicionada com sucesso',
             data: novaMatricula
         });
 
     } catch (err) {
-        console.error('erro ao adicionar matrícula:', err);
 
-        if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({ error: 'ID já cadastrado.' });
+        if (err.code === 'MATRICULA_DUPLICADA') {
+            return res.status(400).json({
+                error: 'usuário já está matriculado nessa turma'
+            });
         }
 
-        res.status(500).json({ error: 'erro ao adicionar matrícula' });
+        if (err.code === 'ER_NO_REFERENCED_ROW_2') {
+            return res.status(400).json({
+                error: 'usuário ou turma inválido'
+            });
+        }
+
+        console.error('erro ao adicionar matrícula:', err);
+
+        return res.status(500).json({
+            error: 'erro ao adicionar matrícula'
+        });
     }
 };
 
