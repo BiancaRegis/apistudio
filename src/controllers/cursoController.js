@@ -22,16 +22,40 @@ export const listarCursos = async (req, res) => {
 
         const { idCurso, titulo, cargaHoraria, nivel, situacao } = req.query;
 
-const cursos = await cursoService.findAll(
-    idCurso, titulo, cargaHoraria, nivel,situacao);
+        const cursos = await cursoService.findAll(
+            idCurso, titulo, cargaHoraria, nivel, situacao);
 
         if (cursos.length === 0) {
-            return res.status(404).json({ message: "nenhum curso encontrado com esses filtros."});
+            return res.status(404).json({ message: "nenhum curso encontrado com esses filtros." });
         }
         res.status(200).json(cursos);
     } catch (err) {
         console.error('erro ao buscar cursos:', err);
         res.status(500).json({ error: 'erro interno do servidor' });
+    }
+};
+
+export const buscarCursoPorId = async (req, res) => {
+    try {
+
+        const { idCurso } = req.params;
+
+        const curso = await cursoService.findById(idCurso);
+
+        if (!curso) {
+            return res.status(404).json({
+                message: 'curso não encontrado.'
+            });
+        }
+
+        res.status(200).json(curso);
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            message: 'erro interno do servidor.'
+        });
     }
 };
 
@@ -43,7 +67,7 @@ export const adicionarCurso = async (req, res) => {
     } catch (err) {
         console.error('erro ao adicionar curso:', err);
         if (err.code === 'ER_DUP_ENTRY') {
-            return res.status(409).json({error: 'ID já cadastrado.'});
+            return res.status(409).json({ error: 'ID já cadastrado.' });
         }
         res.status(500).json({ error: 'erro ao adicionar curso' });
     }
@@ -68,7 +92,7 @@ export const atualizarCurso = async (req, res) => {
 //Deletar produto
 export const deletarCurso = async (req, res) => {
     try {
-        const { idCurso} = req.params;
+        const { idCurso } = req.params;
         const deleted = await cursoService.remove(idCurso);
         if (!deleted) {
             return res.status(404).json({ error: 'curso não encontrado' });

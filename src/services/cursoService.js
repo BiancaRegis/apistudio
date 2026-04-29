@@ -21,10 +21,9 @@ export const findAll = async (idCurso, titulo, cargaHoraria, nivel, situacao) =>
     }
 
     if (nivel) {
-        conditions.push('LOWER(nivel) LIKE ?');
-        values.push(`%${nivel.toLowerCase()}%`);
+        conditions.push('nivel = ?');
+        values.push(nivel);
     }
-
     if (situacao) {
         conditions.push('LOWER(situacao) LIKE ?');
         values.push(`%${situacao.toLowerCase()}%`);
@@ -36,6 +35,13 @@ export const findAll = async (idCurso, titulo, cargaHoraria, nivel, situacao) =>
 
     const [rows] = await db.query(sql, values);
     return rows;
+};
+
+export const findById = async (idCurso) => {
+    const sql = 'SELECT * FROM curso WHERE idCurso = ?';
+    const [rows] = await db.query(sql, [idCurso]);
+
+    return rows[0];
 };
 
 export const create = async (cursoData) => {

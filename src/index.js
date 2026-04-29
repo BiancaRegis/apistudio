@@ -24,7 +24,7 @@ const __dirname = path.dirname(__filename);
 
 // CORS
 const corsOptions = {
-    origin: ['http://localhost:3333',' http://127.0.0.1:5500'],
+    origin: ['http://localhost:3333','http://127.0.0.1:5500'],
     methods: 'GET, POST, PUT, PATCH, DELETE',
     credentials: true
 };
@@ -49,7 +49,7 @@ app.get('/', (req, res) => {
 // PREFIXO API
 const apiPrefix = '/api';
 
-app.use(`${apiPrefix}/auth`, authRoutes);
+app.use(`${apiPrefix}/login`, authRoutes);
 app.use(`${apiPrefix}/usuarios`, usuarioRoutes);
 app.use(`${apiPrefix}/cursos`, cursoRoutes);
 app.use(`${apiPrefix}/turmas`, turmaRoutes);
