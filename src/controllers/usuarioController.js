@@ -11,11 +11,11 @@ export const usuarioCreateSchema = Joi.object({
 });
 
 export const usuarioUpdateSchema = Joi.object({
-    tipoUsuario: Joi.string().valid('admin', 'cliente'),
+    tipoUsuario: Joi.string(),
     nome: Joi.string(),
-    email: Joi.string().email(),
+    email: Joi.string(),
     senha: Joi.string(),
-    telefone: Joi.number().allow(null)
+    telefone: Joi.number()
 }).min(1);
 
 //LISTAR USUÁRIOS

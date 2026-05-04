@@ -10,11 +10,11 @@ export const cursoCreateSchema = Joi.object({
 });
 
 export const cursoUpdateSchema = Joi.object({
-    titulo: Joi.string().min(3),
-    descricao: Joi.string().min(5),
-    cargaHoraria: Joi.string().min(1),
-    nivel: Joi.string().valid(1, 2, 3),
-    situacao: Joi.string().valid('ativo', 'inativo'),
+    titulo: Joi.string(),
+    descricao: Joi.string(),
+    cargaHoraria: Joi.number(),
+    nivel: Joi.number(),
+    situacao: Joi.string(),
 }).min(1);
 //Listar todos os produtos
 export const listarCursos = async (req, res) => {
@@ -85,6 +85,7 @@ export const atualizarCurso = async (req, res) => {
         res.status(200).json({ message: 'curso atualizado com sucesso' });
     } catch (err) {
         console.error('erro ao atualizar curso:', err);
+        console.log(err)
         res.status(500).json({ error: 'erro ao atualizar curso' });
     }
 };

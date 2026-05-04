@@ -9,7 +9,7 @@ router.post('/', validate(cursoCreateSchema), cursoController.adicionarCurso);
 
 router.get('/', cursoController.listarCursos);
 
-router.get('/:idCurso', cursoController.buscarCursoPorId);
+// router.get('/:idCurso', cursoController.buscarCursoPorId);
 
 router.put('/:idCurso', validate(cursoUpdateSchema), cursoController.atualizarCurso);
 

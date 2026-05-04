@@ -10,10 +10,10 @@ export const pagamentoCreateSchema = Joi.object({
 });
 
 export const pagamentoUpdateSchema = Joi.object({
-    dataPagamento: Joi.date().iso(),
-    valorPago: Joi.number().positive(),
-    metodo: Joi.string().lowercase().valid('pix', 'cartao_credito', 'cartao_debito', 'boleto', 'dinheiro', 'carteira_digital'),
-    situacao: Joi.string().lowercase().valid('aguardando', 'pago', 'estornado', 'falhou'),
+    dataPagamento: Joi.date(),
+    valorPago: Joi.number(),
+    metodo: Joi.string(),
+    situacao: Joi.string(),
     idMatricula: Joi.number()
 }).min(1);
 

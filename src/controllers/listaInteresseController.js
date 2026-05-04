@@ -9,8 +9,8 @@ export const listaSchema = Joi.object({
 });
 
 export const listaUpdate = Joi.object({
-   dataInteresse: Joi.date().iso(),
-   situacao: Joi.string().min(3).valid('pendente', 'notificado', 'cancelado'),
+   dataInteresse: Joi.date(),
+   situacao: Joi.string(),
    idUsuario: Joi.number(),
    idCurso: Joi.number()
 }).min(1);
@@ -56,7 +56,7 @@ export const atualizarLista = async (req, res) => {
          return res.status(404).json({ erro: 'interesse não encontrado' });
       }
 
-      return res.json({ mensagem: 'interesse atualizado com sucesso' });
+      return res.json({ message: 'interesse atualizado com sucesso' });
 
    } catch (err) {
 
@@ -118,7 +118,7 @@ export const listarTodos = async (req, res) => {
 
       if (dados.length === 0) {
          return res.status(404).json({
-            mensagem: 'nenhuma lista encontrada'
+            message: 'nenhuma lista encontrada'
          });
       }
 
@@ -141,7 +141,7 @@ export const remover = async (req, res) => {
          });
       }
 
-      return res.json({ mensagem: "Interesse removido" });
+      return res.json({ message: "Interesse removido" });
 
    } catch (err) {
       console.error(err);

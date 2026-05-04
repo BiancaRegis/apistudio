@@ -14,13 +14,13 @@ export const turmaCreateSchema = Joi.object({
 
 
 export const turmaUpdateSchema = Joi.object({
-    dataInicio: Joi.date().iso().allow(''),
-    dataFinal: Joi.date().iso().allow(''),
+    dataInicio: Joi.date().allow(''),
+    dataFinal: Joi.date().allow(''),
     horario: Joi.string(),
-    vagas: Joi.number().min(1),
-    endereco: Joi.string().min(3),
-    preco: Joi.number().min(0),
-    situacao: Joi.string().valid('aberta', 'fechado'),
+    vagas: Joi.number(),
+    endereco: Joi.string(),
+    preco: Joi.number(),
+    situacao: Joi.string(),
     idCurso: Joi.number()
 }).min(1);
 

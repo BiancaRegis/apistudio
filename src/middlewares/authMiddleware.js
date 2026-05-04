@@ -21,7 +21,7 @@ const authMiddleware = (req, res, next) => {
             return res.status(401).json({ message: "Token inválido ou expirado." });
         }
         // 3. Se o token for válido, adicionamos os dados do usuário ma requisição
-        req.useridUsuario = decoded.idUsuario;
+        req.userId = decoded.idUsuario;
         req.userEmail = decoded.email;
         // 4. Chama o próximo middleware ou o controlador final
         return next();

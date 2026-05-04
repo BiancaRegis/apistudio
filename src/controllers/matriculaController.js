@@ -9,8 +9,8 @@ export const matriculaCreateSchema = Joi.object({
 });
 
 export const matriculaUpdateSchema = Joi.object({
-    dataMatricula: Joi.date().iso(),
-    situacao: Joi.string().min(3).valid('pendente', 'confirmada', 'cancelada'),
+    dataMatricula: Joi.date(),
+    situacao: Joi.string(),
     idUsuario: Joi.number(),
     idTurma: Joi.number()
 }).min(1);
